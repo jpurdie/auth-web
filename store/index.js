@@ -9,7 +9,7 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 export const actions = {
-  async onAuthStateChanged({ commit }, { authUser }) {
+  async onAuthStateChangedAction({ commit }, { authUser }) {
     if (!authUser) {
       commit('RESET_STORE')
       return
@@ -28,7 +28,6 @@ export const actions = {
     if (this.$fire.auth === null) {
       throw new 'Vuex Store example not working - this.$fire.auth cannot be accessed.'()
     }
-
     alert(
       'Success. Nuxt-fire Objects can be accessed in store actions via this.$fire___'
     )
@@ -40,10 +39,22 @@ export const mutations = {
     Object.assign(state, getDefaultState())
   },
   SET_TOKEN: (state, token) => {
+    console.log('Auth User 0')
     state.token = token
   },
-
+  ON_AUTH_STATE_CHANGED_MUTATION: (state, { authUser, claims }) => {
+    if (!authUser) {
+      // claims = null
+      // perform logout operations
+    } else {
+      console.log('Auth User 1', authUser)
+      const { uid, email, emailVerified } = authUser
+      state.user = { uid, email, emailVerified }
+    }
+  },
   SET_AUTH_USER: (state, { authUser }) => {
+    console.log('Auth User 2', authUser)
+
     state.authUser = {
       displayName: authUser.displayName,
       uid: authUser.uid,

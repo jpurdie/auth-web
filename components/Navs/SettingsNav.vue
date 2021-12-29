@@ -38,6 +38,8 @@ export default {
           icon: 'mdi-account-key',
           link: '/settings/security',
         },
+        { title: 'Email', icon: 'mdi-email', link: '/settings/email' },
+
         { title: 'About', icon: 'mdi-help-box', link: '/settings/about' },
       ],
     }

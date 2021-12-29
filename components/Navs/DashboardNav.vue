@@ -71,13 +71,16 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      authUser: (state) => state.authUser,
-    }),
+    ...mapState(['authUser']),
     ...mapGetters({
       isLoggedIn: 'isLoggedIn',
       initials: 'getInitials',
     }),
+  },
+  watch: {
+    authUser(newValue, oldValue) {
+      console.log(`Updating from ${oldValue} to ${newValue}`)
+    },
   },
   methods: {
     async dologout() {

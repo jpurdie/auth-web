@@ -1,14 +1,13 @@
 <template>
   <span>
     <v-app-bar color="white" app clipped-left>
-      <router-link v-if="isLoggedIn" to="/dashboard"
-        ><v-img
-          :src="require(`~/assets/logo_transparent.png`)"
-          max-height="64"
-          max-width="64"
-          contain
-        ></v-img>
-      </router-link>
+      <v-img
+        :src="require(`~/assets/logo_transparent.png`)"
+        max-height="64"
+        max-width="64"
+        contain
+      ></v-img>
+      <router-link v-if="isLoggedIn" to="/dashboard">Dashboard</router-link>
       <v-spacer></v-spacer>
 
       <v-menu offset-y>

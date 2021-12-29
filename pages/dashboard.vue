@@ -7,8 +7,8 @@
             <v-toolbar-title>Dashboard</v-toolbar-title>
           </v-toolbar>
           <v-card-actions>
-            <v-btn @click="pingAuth">Auth Ping</v-btn><br />
-            <v-btn @click="nonAuthPing">Non Auth Ping</v-btn>
+            <v-btn @click="pingAuth">Authenticated Request</v-btn><br />
+            <v-btn @click="nonAuthPing">Unauthenticated Request</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
