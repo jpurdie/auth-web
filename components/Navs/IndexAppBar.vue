@@ -1,7 +1,7 @@
 <template>
   <span>
     <v-app-bar color="white" app>
-      <router-link to="/"
+      <router-link v-if="!isLoggedIn" to="/"
         ><v-img
           :src="require(`~/assets/logo_transparent.png`)"
           max-height="64"
@@ -9,7 +9,16 @@
           contain
         ></v-img>
       </router-link>
-      <router-link to="/">Vitae</router-link>
+      <router-link v-if="isLoggedIn" to="/dashboard"
+        ><v-img
+          :src="require(`~/assets/logo_transparent.png`)"
+          max-height="64"
+          max-width="64"
+          contain
+        ></v-img>
+      </router-link>
+      <router-link v-if="!isLoggedIn" to="/">Vitae</router-link>
+      <router-link v-if="isLoggedIn" to="/dashboard">Dashboard</router-link>
       <v-spacer></v-spacer>
       <div v-if="!isLoggedIn">
         <v-btn class="mr-2" to="/login">Login</v-btn>

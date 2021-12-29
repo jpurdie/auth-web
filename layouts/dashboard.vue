@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <NavsSettingsAppBar />
+    <NavsDashboardNav />
     <v-main>
       <v-container fluid class="pa-0">
         <nuxt />
@@ -14,6 +14,7 @@
 
 <script>
 export default {
+  components: {},
   data() {
     return {
       clipped: false,
@@ -37,13 +38,6 @@ export default {
       title: 'Vuetify.js',
     }
   },
-  methods: {
-    dologin() {
-      this.$auth.loginWith('awsCognito')
-    },
-    dologout() {
-      this.$auth.logout('awsCognito')
-    },
-  },
+  methods: {},
 }
 </script>

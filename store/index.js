@@ -1,5 +1,6 @@
 const getDefaultState = () => {
   return {
+    authEmail: '',
     authUser: null,
     token: null,
   }
@@ -41,6 +42,7 @@ export const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
+
   SET_AUTH_USER: (state, { authUser }) => {
     state.authUser = {
       displayName: authUser.displayName,
@@ -67,6 +69,9 @@ export const getters = {
         .join('')
         .toUpperCase()
     }
+  },
+  getAuthEmail(state) {
+    return state.authEmail
   },
   async getToken(state) {
     try {

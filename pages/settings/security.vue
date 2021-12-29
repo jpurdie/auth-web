@@ -1,56 +1,65 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="12" md="2"> <NavsSettingsNavDrawer /> </v-col>
+      <v-col cols="12" md="2"> <NavsSettingsNav /> </v-col>
       <v-col cols="12" md="6">
-        <v-card v-if="error" id="errors-div" class="elevation-12">
-          <v-alert show type="error">{{ error }}</v-alert>
-        </v-card>
-        <v-card v-if="messageSuccess" id="errors-div" class="elevation-12">
-          <v-alert show type="success">{{ messageSuccess }}</v-alert>
+        <v-card v-if="alerts" id="messages-div" class="elevation-12">
+          <v-alert
+            v-for="alert in alerts"
+            :key="alert.text"
+            show
+            :type="alert.type"
+            >{{ alert.msg }}</v-alert
+          >
         </v-card>
         <v-card class="mx-auto" outlined>
           <v-toolbar dark color="primary">
             <v-toolbar-title>Security</v-toolbar-title>
           </v-toolbar>
-          <ValidationObserver ref="obs">
+          <ValidationObserver ref="observer">
             <v-form @keydown.enter="register" @submit.stop.prevent="onSubmit">
               <v-card-text>
                 <ValidationProvider
                   v-slot="{ errors }"
-                  name="Existing Password"
+                  name="existing password"
                   rules="required"
                 >
                   <v-text-field
                     v-model="currentPassword"
+                    autocomplete="off"
                     :error-messages="errors"
                     label="Existing Password"
                     required
+                    type="password"
                   ></v-text-field>
                 </ValidationProvider>
                 <ValidationProvider
                   v-slot="{ errors }"
-                  name="New Password"
+                  name="password"
                   rules="required|max:40"
                 >
                   <v-text-field
                     v-model="newPassword"
+                    autocomplete="off"
                     :error-messages="errors"
-                    label="New Password"
+                    label="Password"
                     required
+                    type="password"
                   ></v-text-field>
                 </ValidationProvider>
 
                 <ValidationProvider
                   v-slot="{ errors }"
-                  name="New Password Confirm"
+                  name="password confirm"
                   rules="required|max:40"
                 >
                   <v-text-field
                     v-model="newPasswordConfirm"
+                    autocomplete="off"
                     :error-messages="errors"
                     label="New Password Confirm"
                     required
+                    type="password"
                   ></v-text-field>
                 </ValidationProvider>
               </v-card-text>
@@ -68,6 +77,7 @@
 
 <script>
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import { updatePassword, reauthenticateWithCredential } from 'firebase/auth'
 
 export default {
   components: {
@@ -75,48 +85,84 @@ export default {
     ValidationProvider,
   },
   layout: 'settings',
-  middleware: 'authz',
-
   data() {
     return {
-      error: undefined,
-      currentPassword: 'Mock123456!',
-      newPassword: 'Mock123456?',
-      newPasswordConfirm: 'Mock123456?',
+      alerts: [],
+      currentPassword: '',
+      newPassword: '',
+      newPasswordConfirm: '',
       messageSuccess: '',
     }
   },
-  mounted() {
-    this.fetchUser()
-  },
+  mounted() {},
   methods: {
-    async fetchUser() {
-      // this.user = await this.$store.dispatch('user/fetchMe')
-    },
     async clear() {
       await this.$refs.observer.reset()
     },
+    processAuthError(errorMsg) {
+      errorMsg = String(errorMsg)
+      if (errorMsg.includes('auth/too-many-requests')) {
+        this.alerts = [
+          {
+            msg: 'Access to this account has been temporarily disabled due to many failed login attempts.',
+            type: 'error',
+          },
+        ]
+        return
+      }
+
+      if (errorMsg.includes('auth/wrong-password')) {
+        this.alerts = [
+          {
+            msg: 'The password is invalid or the user does not have a password.',
+            type: 'error',
+          },
+        ]
+      }
+    },
     async submit() {
-      this.messageSuccess = ''
-      this.error = ''
+      this.alerts = []
+      const isValid = await this.$refs.observer.validate()
+
+      if (!isValid) {
+        return
+      }
 
       if (this.newPassword !== this.newPasswordConfirm) {
-        this.error = "Passwords don't match."
+        this.alerts = [{ msg: 'Passwords do not match', type: 'error' }]
         return false
       }
 
+      const user = await this.$fire.auth.currentUser
+
+      const credential = this.$fireModule.auth.EmailAuthProvider.credential(
+        this.$store.state.authUser.email,
+        this.currentPassword
+      )
+
+      let authenticated
+
       try {
-        const resp = await this.$store.dispatch('auth/changePassword', {
-          currentPassword: this.currentPassword,
-          newPassword: this.newPassword,
-        })
-        if (resp === 'SUCCESS') {
-          this.messageSuccess = 'Updated.'
-        } else {
-          this.messageSuccess = resp
-        }
+        authenticated = await reauthenticateWithCredential(user, credential)
       } catch (error) {
-        this.error = error
+        this.processAuthError(error)
+        return false
+      }
+
+      if (authenticated !== undefined) {
+        try {
+          const updatedPass = await updatePassword(user, this.newPassword)
+          console.log('updatedPass', updatedPass)
+          if (updatedPass === undefined) {
+            this.alerts = [{ msg: 'Password Updated', type: 'success' }]
+          }
+          this.clear()
+          this.currentPassword = ''
+          this.newPassword = ''
+          this.newPasswordConfirm = ''
+        } catch (error) {
+          this.processAuthError(error)
+        }
       }
     },
   },

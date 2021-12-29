@@ -8,8 +8,8 @@
 </template>
 <script>
 export default {
-  middleware: 'authz',
-  auth: 'guest',
+  layout: 'dashboard',
+
   data() {
     return {
       error: {
@@ -19,13 +19,6 @@ export default {
     }
   },
   async mounted() {},
-  methods: {
-    pingAuth() {
-      this.$axios.get('/v1/private')
-    },
-    nonAuthPing() {
-      this.$axios.get('/v1/public')
-    },
-  },
+  methods: {},
 }
 </script>

@@ -1,5 +1,5 @@
-// export default function ({ store, redirect }) {
-//   if (store.state.auth.isAuthenticated === false) {
-//     return redirect('/')
-//   }
-// }
+export default function ({ store, redirect }) {
+  if (store.state.authUser === null || store.state.authUser === '') {
+    return redirect('/')
+  }
+}

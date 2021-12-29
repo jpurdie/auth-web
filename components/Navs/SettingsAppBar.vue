@@ -1,19 +1,20 @@
 <template>
   <span>
-    <v-app-bar color="white" app>
-      <v-toolbar-title class="ml-2">
-        <NuxtLink to="/dashboard">Dashboard</NuxtLink>
-      </v-toolbar-title>
-
+    <v-app-bar color="white" app clipped-left>
+      <router-link v-if="isLoggedIn" to="/dashboard"
+        ><v-img
+          :src="require(`~/assets/logo_transparent.png`)"
+          max-height="64"
+          max-width="64"
+          contain
+        ></v-img>
+      </router-link>
       <v-spacer></v-spacer>
-      <v-btn v-if="!$auth.isAuthenticated" class="mr-2" @click="dologin"
-        >Login/Register</v-btn
-      >
-      <v-menu v-if="$auth.isAuthenticated" offset-y>
+
+      <v-menu offset-y>
         <template #activator="{ on, attrs }">
           <v-btn color="primary" dark v-bind="attrs" v-on="on">
-            {{ $auth.user.attributes.given_name }}
-            <v-icon>mdi-menu-down</v-icon>
+            {{ initials }}<v-icon>mdi-menu-down</v-icon>
           </v-btn>
         </template>
         <v-list>
@@ -30,6 +31,8 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
@@ -54,13 +57,23 @@ export default {
       title: 'Vuetify.js',
     }
   },
+  computed: {
+    ...mapState({
+      authUser: (state) => state.authUser,
+    }),
+    ...mapGetters({
+      isLoggedIn: 'isLoggedIn',
+      initials: 'getInitials',
+    }),
+  },
   methods: {
-    dologin() {
-      this.$auth.loginWith('auth0')
-    },
     async dologout() {
-      await this.$store.dispatch('auth/logout')
-      this.$router.push('/')
+      try {
+        await this.$fire.auth.signOut()
+        this.$router.push('/')
+      } catch (e) {
+        alert(e)
+      }
     },
   },
 }

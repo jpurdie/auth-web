@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <index-nav />
+    <NavsIndexAppBar />
     <v-main>
       <v-container fluid class="pa-0">
         <nuxt />
@@ -13,9 +13,7 @@
 </template>
 
 <script>
-import IndexNav from '~/components/Navs/IndexNav.vue'
 export default {
-  components: { IndexNav },
   data() {
     return {
       clipped: false,
