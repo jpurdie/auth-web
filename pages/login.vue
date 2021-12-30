@@ -6,6 +6,7 @@
           <v-alert show type="error">{{ error }}</v-alert>
         </v-card>
         <h1>Login</h1>
+
         <div id="firebaseui-auth-container"></div>
       </v-col>
     </v-row>
@@ -26,7 +27,16 @@ export default {
       new firebaseui.auth.AuthUI(this.$fire.auth)
 
     const config = {
-      signInOptions: [this.$fireModule.auth.EmailAuthProvider.PROVIDER_ID],
+      signInOptions: [
+        {
+          provider: this.$fireModule.auth.EmailAuthProvider.PROVIDER_ID,
+          customParameters: {
+            // Forces account selection even when one account
+            // is available.
+            prompt: 'select_account',
+          },
+        },
+      ],
       signInSuccessUrl: '/dashboard',
       callbacks: {
         signInSuccessWithAuthResult() {
@@ -64,4 +74,11 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style>
+.firebaseui-card-header {
+  display: none !important;
+}
+.firebaseui-card-content {
+  padding: 24px 24px !important;
+}
+</style>

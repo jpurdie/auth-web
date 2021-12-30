@@ -88,8 +88,13 @@ export default {
         }
 
         const resp = await updateProfile(user, newProfile)
-
         if (resp === undefined) {
+          const myUser = await $vm.$fire.auth.currentUser
+
+          await this.$store.dispatch('onAuthStateChangedAction', {
+            authUser: myUser,
+          })
+
           $vm.disabledSubmit = false
           $vm.alerts = [{ msg: 'Success', type: 'success' }]
           $vm.resetFormErrors()

@@ -72,26 +72,9 @@ export default {
 
 <style>
 .firebaseui-card-header {
-  display: none;
+  display: none !important;
 }
-/* .firebaseui-card-header {
-  display: none;
+.firebaseui-card-content {
+  padding: 24px 24px !important;
 }
-
-.firebaseui-card-header {
-  padding-bottom: 16px;
-}
-
-.firebaseui-card-header::after {
-  content: 'Sign up with email';
-  color: rgba(0, 0, 0, 0.87);
-  direction: ltr;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 24px;
-  margin: 0;
-  padding: 0;
-  padding-bottom: 0px;
-  text-align: left;
-} */
 </style>

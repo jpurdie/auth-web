@@ -1,7 +1,6 @@
 const getDefaultState = () => {
   return {
-    authEmail: '',
-    authUser: null,
+    authUser: undefined,
     token: null,
   }
 }
@@ -9,6 +8,9 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 export const actions = {
+  calcInitials({ commit }) {
+    commit('CALC_INITIALS')
+  },
   async onAuthStateChangedAction({ commit }, { authUser }) {
     if (!authUser) {
       commit('RESET_STORE')
@@ -38,8 +40,22 @@ export const mutations = {
   RESET_STORE: (state) => {
     Object.assign(state, getDefaultState())
   },
+  CALC_INITIALS: (state) => {
+    if (
+      state.authUser !== undefined &&
+      state.authUser.displayName !== undefined
+    ) {
+      state.authUser.initials = state.authUser.displayName
+        .match(/(^\S\S?|\b\S)?/g)
+        .join('')
+        .match(/(^\S|\S$)?/g)
+        .join('')
+        .toUpperCase()
+    } else {
+      state.authUser.initials = 'Me'
+    }
+  },
   SET_TOKEN: (state, token) => {
-    console.log('Auth User 0')
     state.token = token
   },
   ON_AUTH_STATE_CHANGED_MUTATION: (state, { authUser, claims }) => {
@@ -47,14 +63,11 @@ export const mutations = {
       // claims = null
       // perform logout operations
     } else {
-      console.log('Auth User 1', authUser)
       const { uid, email, emailVerified } = authUser
-      state.user = { uid, email, emailVerified }
+      state.authUser = { uid, email, emailVerified }
     }
   },
   SET_AUTH_USER: (state, { authUser }) => {
-    console.log('Auth User 2', authUser)
-
     state.authUser = {
       displayName: authUser.displayName,
       uid: authUser.uid,
@@ -72,7 +85,10 @@ export const getters = {
     }
   },
   getInitials(state) {
-    if (state.authUser !== null && state.authUser.displayName !== null) {
+    if (
+      state.authUser !== undefined &&
+      state.authUser.displayName !== undefined
+    ) {
       return state.authUser.displayName
         .match(/(^\S\S?|\b\S)?/g)
         .join('')
