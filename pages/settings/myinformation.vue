@@ -5,7 +5,7 @@
         <NavsSettingsNav />
       </v-col>
       <v-col cols="12" md="6">
-        <FormsMyName />
+        <FormsMyInfo />
       </v-col>
     </v-row>
   </v-container>
