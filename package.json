@@ -12,13 +12,12 @@
   },
   "dependencies": {
     "@aws-amplify/ui-components": "^1.9.6",
-    "@aws-amplify/ui-vue": "^2.0.5",
     "@nuxtjs/auth-next": "^5.0.0-1637745161.ea53f98",
     "@nuxtjs/axios": "^5.12.5",
     "@nuxtjs/firebase": "^8.1.1",
-    "aws-amplify": "^4.3.10",
+    "aws-amplify": "^4.3.12",
     "core-js": "^3.8.3",
-    "firebase": "^9.6.1",
+    "firebase": "^9.6.3",
     "firebaseui": "^6.0.0",
     "nuxt": "^2.15.8",
     "vee-validate": "^3.4.13"
